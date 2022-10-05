@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import axios from '../api/axios';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 import { CHECK_FIRST, CHECK_LAST, CHECK_EMAIL, CHECK_PWD, REGISTER_URL } from '../helpers/constant';
 import { faCheck, faTimes, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
@@ -8,19 +8,35 @@ import "../styles/form.css";
 
 const Register = () => {
     const navigate = useNavigate();
+
     const [firstName, setFirstName] = useState('');
     const [validFirstName, setValidFirstName] = useState(false);
+    const [firstFocus, setFirstFocus] = useState(false);
+
     const [lastName, setLastName] = useState('');
     const [validLastName, setValidLastName] = useState(false);
+    const [lastFocus, setLastFocus] = useState(false);
+
     const [email, setEmail] = useState('');
     const [validEmail, setValidEmail] = useState(false);
+    const [emailFocus, setEmailFocus] = useState(false);
+
     const [pass, setPass] = useState('');
     const [validPass, setValidPass] = useState(false);
+    const [passFocus, setPassFocus] = useState(false);
+
     const [matchPass, setMatchPass] = useState('');
     const [validMatch, setValidMatch] = useState(false);
+    const [matchFocus, setMatchFocus] = useState(false);
+
     const [errMsg, setErrMsg] = useState('');
 
+    const userRef = useRef();
     const errorRef = useRef();
+
+    useEffect(() => {
+        userRef.current.focus()
+    }, []);
 
     useEffect(() => {
         const result = CHECK_FIRST.test(firstName);
@@ -88,7 +104,7 @@ const Register = () => {
     };
 
     return (
-        <div className="container-fluid mt-5">
+        <div className="container-fluid mt-4">
             <div className="row justify-content-center">
                 <div className="col-10 col-sm-8 col-md-7 col-lg-6 col-xl-5 col-xxl-4">
                     <div className="card mb-3">
@@ -96,12 +112,12 @@ const Register = () => {
                             <h1>Register</h1>
                         </div>
                         <div className="card-body">
-                            <div ref={errorRef} className={errMsg ? "alert alert-danger my-3" : ""} role="alert">{errMsg}</div>
+                            <div ref={errorRef} className={errMsg ? "alert alert-danger my-3" : "offscreen"} role="alert">{errMsg}</div>
 
-                            <form onSubmit={handleSubmit} novalidate>
+                            <form onSubmit={handleSubmit} noValidate>
                                 <div className="row mb-3">
                                     <div className="col-6">
-                                        <label htmlFor='first-name-input' className="form-label label-required">
+                                        <label htmlFor='first-name-input' className="form-label">
                                             First Name
                                             <span className={validFirstName ? "valid" : "hide"}>
                                                 <FontAwesomeIcon icon={faCheck} />
@@ -110,18 +126,23 @@ const Register = () => {
                                                 <FontAwesomeIcon icon={faTimes} />
                                             </span>
                                         </label>
-                                        <input type="text" className="form-control" id="first-name-input" name="firstName" required
-                                            minlength="3" onChange={(e) => setFirstName(e.target.value)} />
+                                        <input type="text" ref={userRef} className="form-control" id="first-name-input" name="firstName" required
+                                            minLength="3" autoComplete='off' aria-describedby='first-name-validation-error-hook'
+                                            onChange={(e) => setFirstName(e.target.value)}
+                                            onFocus={() => setFirstFocus(true)}
+                                            onBlur={() => setFirstFocus(false)}
+                                        />
 
-                                        <div className="invalid-feedback" id="first-name-validation-error-hook">
-                                            <FontAwesomeIcon icon={faInfoCircle} />
+                                        <div className={firstFocus && !validFirstName ? "feedback" : "offscreen"}
+                                            id="first-name-validation-error-hook">
+                                            <FontAwesomeIcon icon={faInfoCircle} />&nbsp;
                                             The first name is required. <br />
-                                            The first name must contain at least 3 characters. <br />
+                                            Must contain at least 3 characters. <br />
                                         </div>
                                     </div>
 
                                     <div className="col-6">
-                                        <label htmlFor="last-name-input" className="form-label label-required">
+                                        <label htmlFor="last-name-input" className="form-label">
                                             Last Name
                                             <span className={validLastName ? "valid" : "hide"}>
                                                 <FontAwesomeIcon icon={faCheck} />
@@ -131,18 +152,23 @@ const Register = () => {
                                             </span>
                                         </label>
                                         <input type="text" className="form-control" id="last-name-input" name="lastName" required
-                                            minlength="3" onChange={(e) => setLastName(e.target.value)} />
+                                            minLength="3" autoComplete='off' aria-describedby='last-name-validation-error-hook'
+                                            onChange={(e) => setLastName(e.target.value)}
+                                            onFocus={() => setLastFocus(true)}
+                                            onBlur={() => setLastFocus(false)}
+                                        />
 
-                                        <div className="invalid-feedback" id="last-name-validation-error-hook">
-                                            <FontAwesomeIcon icon={faInfoCircle} />
+                                        <div className={lastFocus && !validLastName ? "feedback" : "offscreen"}
+                                            id="last-name-validation-error-hook">
+                                            <FontAwesomeIcon icon={faInfoCircle} />&nbsp;
                                             The last name is required. <br />
-                                            The last name must contain at least 3 characters. <br />
+                                            Must contain at least 3 characters. <br />
                                         </div>
                                     </div>
                                 </div>
 
                                 <div className="mb-3">
-                                    <label htmlFor="email-input" className="form-label label-required">
+                                    <label htmlFor="email-input" className="form-label">
                                         Email
                                         <span className={validEmail ? "valid" : "hide"}>
                                             <FontAwesomeIcon icon={faCheck} />
@@ -152,16 +178,24 @@ const Register = () => {
                                         </span>
                                     </label>
                                     <input type="email" className="form-control" id="email-input" name="email" required
-                                        onChange={(e) => setEmail(e.target.value)} />
+                                        autoComplete='off'
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        aria-describedby='email-validation-error-hook'
+                                        onFocus={() => setEmailFocus(true)}
+                                        onBlur={() => setEmailFocus(false)}
+                                    />
 
-                                    <div className="invalid-feedback" id="email-validation-error-hook">
-                                        <FontAwesomeIcon icon={faInfoCircle} />
+                                    <div className={emailFocus && !validEmail ? "feedback" : "offscreen"}
+                                        id="email-validation-error-hook">
+                                        <FontAwesomeIcon icon={faInfoCircle} />&nbsp;
                                         The email is required. <br />
+                                        Must include at symbol: <span aria-label="at symbol">@</span> <br />
+                                        Can contain letters, numbers, underscores, hyphens.
                                     </div>
                                 </div>
 
                                 <div className="mb-3">
-                                    <label htmlFor="password-input" className="form-label label-required">
+                                    <label htmlFor="password-input" className="form-label">
                                         Password
                                         <span className={validPass ? "valid" : "hide"}>
                                             <FontAwesomeIcon icon={faCheck} />
@@ -171,17 +205,27 @@ const Register = () => {
                                         </span>
                                     </label>
                                     <input type="password" className="form-control" id="password-input" name="password" required
-                                        onChange={(e) => setPass(e.target.value)} />
+                                        onChange={(e) => setPass(e.target.value)}
+                                        aria-describedby='password-validation-error-hook'
+                                        onFocus={() => setPassFocus(true)}
+                                        onBlur={() => setPassFocus(false)}
+                                    />
 
-                                    <div className="invalid-feedback" id="password-validation-error-hook">
-                                        <FontAwesomeIcon icon={faInfoCircle} />
+                                    <div className={passFocus && !validPass ? "feedback" : "offscreen"}
+                                        id="password-validation-error-hook">
+                                        <FontAwesomeIcon icon={faInfoCircle} />&nbsp;
+                                        6 to 40 characters. <br />
+                                        Must include uppercase and lowercase letters, a number and special character. <br />
+                                        Allowed special characters: <span aria-label="exclamation mark">!</span>
+                                        <span aria-label="at symbol">@</span><span aria-label="hashtag">#</span>
+                                        <span aria-label="dollar sign">$</span><span aria-label="percent">%</span>
                                     </div>
                                 </div>
 
                                 <div className="mb-3">
-                                    <label for="confirm-password-input" className="form-label label-required">
+                                    <label htmlFor="confirm-password-input" className="form-label">
                                         Confirm Password
-                                        <span className={validMatch ? "valid" : "hide"}>
+                                        <span className={validMatch && matchPass ? "valid" : "hide"}>
                                             <FontAwesomeIcon icon={faCheck} />
                                         </span>
                                         <span className={validMatch || !matchPass ? "hide" : "invalid"}>
@@ -189,30 +233,29 @@ const Register = () => {
                                         </span>
                                     </label>
                                     <input type="password" className="form-control" id="confirm-password-input"
-                                        name="confirmPassword" required onChange={(e) => setMatchPass(e.target.value)} />
+                                        name="confirmPassword" required onChange={(e) => setMatchPass(e.target.value)}
+                                        aria-describedby='confirm-password-validation-error-hook'
+                                        onFocus={() => setMatchFocus(true)}
+                                        onBlur={() => setMatchFocus(false)}
+                                    />
 
-                                    <div className="invalid-feedback" id="confirm-password-validation-error-hook">
+                                    <div className={matchFocus && !validMatch ? "feedback" : "offscreen"}
+                                        id="confirm-password-validation-error-hook">
                                         <FontAwesomeIcon icon={faInfoCircle} />
+                                        &nbsp;Must match the first password input field.
                                     </div>
                                 </div>
 
-                                <div className="mb-3 form-check">
-                                    <input type="checkbox" className="form-check-input" id="accepted-terms-and-conditions-check"
-                                        name="acceptedTermsAndConditions" required />
-                                    <label clclassNameass="form-check-label" for="accepted-terms-and-conditions-check">Accept&nbsp;<a
-                                        className="text-decoration-none" href="/terms">Terms and Conditions</a></label>
-                                    <div className="invalid-feedback"
-                                        id="accepted-terms-and-conditions-validation-error-hook"></div>
-                                </div>
-
                                 <div className="d-grid">
-                                    <button type="submit" className="btn btn-primary mb-3" id="register-button" disabled>Register
+                                    <button type="submit" className="btn btn-primary mb-3" id="register-button"
+                                        disabled={!validFirstName || !validLastName || !validEmail || !validPass || !validMatch ? true : false}>
+                                        Register
                                     </button>
                                     <button type="reset" className="btn btn-secondary">Cancel</button>
                                 </div>
                             </form>
                             <div className="text-center mt-3">
-                                <a href="/login" className="text-decoration-none"><strong>Already have an account? Login!</strong></a>
+                                <Link to="/login" className="text-decoration-none"><strong>Already have an account? Sign In!</strong></Link>
                             </div>
                         </div>
                     </div>
