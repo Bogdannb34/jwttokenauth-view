@@ -4,6 +4,9 @@ import Layout from './Layout';
 import Unauthorized from './Unauthorized';
 import Home from './Home';
 import Missing from './Missing';
-import LinkPage from './LinkPage';
+import RequireAuth from './RequireAuth';
+import Users from './Users';
+import Admin from './Admin';
+import AccessPage from './AccessPage';
 
-export { Layout, Home, Register, Login, Unauthorized, Missing, LinkPage };
+export { AccessPage, Layout, Home, Register, Login, Unauthorized, Missing, RequireAuth, Users, Admin };

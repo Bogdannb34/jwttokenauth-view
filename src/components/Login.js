@@ -2,9 +2,10 @@ import { useRef, useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { LOGIN_URL } from '../helpers/constant';
 import axios from '../api/axios';
+import useAuth from '../hooks/useAuth';
 
 const Login = () => {
-
+    const { setAuth } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
     const from = location.state?.from?.pathname || "/";
@@ -33,7 +34,10 @@ const Login = () => {
                     withCredentials: true
                 }
             );
-            console.log(response?.data);
+            console.log(JSON.stringify(response?.data));
+            const accessToken = response?.data?.accessToken;
+            const roles = response?.data?.roles;
+            setAuth({ email, pass, roles, accessToken });
             setEmail('');
             setPass('');
             navigate(from, { replace: true });
