@@ -85,16 +85,13 @@ const Login = () => {
                                         maxLength="40" />
                                 </div>
 
-
                                 <div className="mb-3 form-check text-start">
                                     <input type="checkbox" className="form-check-input" id="remember-me" name="remember-me" />
                                     <label className="form-check-label" htmlFor="remember-me">Remember Me</label>
                                 </div>
 
-
                                 <div className="d-grid">
-                                    <button type="submit" className="btn btn-primary mb-3" id="log-in-button"
-                                        disabled={!email || !pass ? true : false}>
+                                    <button type="submit" className="btn btn-primary mb-3" id="log-in-button">
                                         Login</button>
                                     <button type="reset" className="btn btn-secondary">Cancel</button>
                                 </div>
